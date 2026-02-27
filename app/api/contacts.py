@@ -1,8 +1,11 @@
-"""Contact CRUD API."""
+"""Contact CRUD API with CSV export."""
 
+import csv
+import io
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -98,3 +101,34 @@ async def import_contacts(contacts: list[ContactCreate], db: AsyncSession = Depe
         created += 1
     await db.commit()
     return {"created": created, "skipped": skipped}
+
+
+@router.get("/export/csv")
+async def export_contacts_csv(
+    subscribed: bool | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """Export all contacts as a CSV file."""
+    stmt = select(Contact)
+    if subscribed is not None:
+        stmt = stmt.where(Contact.subscribed == subscribed)
+    stmt = stmt.order_by(Contact.created_at.desc())
+    result = await db.execute(stmt)
+    contacts_list = result.scalars().all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["email", "first_name", "last_name", "phone", "country", "language", "subscribed", "created_at"])
+    for c in contacts_list:
+        writer.writerow([
+            c.email, c.first_name, c.last_name, c.phone,
+            c.country, c.language, c.subscribed,
+            c.created_at.isoformat() if c.created_at else "",
+        ])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=contacts.csv"},
+    )

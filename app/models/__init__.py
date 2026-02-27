@@ -134,6 +134,21 @@ class Workflow(Base):
     updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
 
+class EmailTemplate(Base):
+    """Reusable email template with Jinja2 variables."""
+    __tablename__ = "email_templates"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String(300), nullable=False, unique=True)
+    subject = Column(String(500), nullable=False)
+    html_body = Column(Text, default="")
+    text_body = Column(Text, default="")
+    variables = Column(JSON, default=list)  # expected variable names
+    category = Column(String(100), default="general")
+    created_at = Column(DateTime(timezone=True), default=utcnow)
+    updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
 class User(Base):
     """Admin user for the dashboard."""
     __tablename__ = "users"

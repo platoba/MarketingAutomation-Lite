@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.api import contacts, campaigns, workflows, dashboard
+from app.api import auth, contacts, campaigns, templates, tracking, workflows, dashboard
 
 settings = get_settings()
 
@@ -49,8 +49,11 @@ app.add_middleware(
 )
 
 # Register routers
+app.include_router(auth.router, prefix="/api/v1")
 app.include_router(contacts.router, prefix="/api/v1")
 app.include_router(campaigns.router, prefix="/api/v1")
+app.include_router(templates.router, prefix="/api/v1")
+app.include_router(tracking.router, prefix="/api/v1")
 app.include_router(workflows.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
 
