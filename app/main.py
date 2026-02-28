@@ -6,7 +6,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.api import auth, contacts, campaigns, templates, tracking, workflows, dashboard
+from app.api import (
+    auth, contacts, campaigns, templates, tracking, workflows, dashboard,
+    ab_testing, analytics, import_export, webhooks, scoring, lifecycle,
+    tags, segments, automation_rules,
+)
 
 settings = get_settings()
 
@@ -35,8 +39,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.1.0",
-    description="Lightweight marketing automation for cross-border e-commerce",
+    version="6.0.0",
+    description="Lightweight marketing automation for cross-border e-commerce — with campaign scheduling, audience builder, automation rules, lead scoring, lifecycle management, A/B testing, suppression lists, webhooks, campaign analytics, email validation, and cohort analysis",
     lifespan=lifespan,
 )
 
@@ -56,6 +60,15 @@ app.include_router(templates.router, prefix="/api/v1")
 app.include_router(tracking.router, prefix="/api/v1")
 app.include_router(workflows.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
+app.include_router(ab_testing.router, prefix="/api/v1")
+app.include_router(analytics.router, prefix="/api/v1")
+app.include_router(import_export.router, prefix="/api/v1")
+app.include_router(webhooks.router, prefix="/api/v1")
+app.include_router(scoring.router, prefix="/api/v1")
+app.include_router(lifecycle.router, prefix="/api/v1")
+app.include_router(tags.router, prefix="/api/v1")
+app.include_router(segments.router, prefix="/api/v1")
+app.include_router(automation_rules.router, prefix="/api/v1")
 
 
 @app.get("/health")

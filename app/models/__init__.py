@@ -186,3 +186,9 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     created_at = Column(DateTime, default=utcnow)
+
+
+# Import sub-models so Alembic/Base.metadata picks them up
+from app.models.ab_test import ABTest, ABTestVariant  # noqa: E402, F401
+from app.models.webhook import WebhookEndpoint, WebhookDelivery  # noqa: E402, F401
+from app.models.lead_score import ScoringRule, ContactScore, ScoreEvent, SuppressionList  # noqa: E402, F401

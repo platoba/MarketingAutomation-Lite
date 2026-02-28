@@ -1,5 +1,6 @@
 """Async SQLAlchemy engine & session — supports SQLite and PostgreSQL."""
 
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -26,6 +27,38 @@ async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit
 
 class Base(DeclarativeBase):
     pass
+
+
+@event.listens_for(Base, "init", propagate=True)
+def _apply_defaults(target, args, kwargs):
+    """Apply Column defaults at Python level right after __init__."""
+    from sqlalchemy import inspect as sa_inspect
+
+    try:
+        mapper = sa_inspect(type(target))
+    except Exception:
+        return
+    for col_attr in mapper.column_attrs:
+        key = col_attr.key
+        if key in kwargs:
+            continue
+        val = getattr(target, key, None)
+        if val is not None:
+            continue
+        col = col_attr.columns[0]
+        if col.default is None:
+            continue
+        arg = col.default.arg
+        if callable(arg):
+            try:
+                setattr(target, key, arg())
+            except TypeError:
+                try:
+                    setattr(target, key, arg(None))
+                except Exception:
+                    pass
+        else:
+            setattr(target, key, arg)
 
 
 async def get_db():
