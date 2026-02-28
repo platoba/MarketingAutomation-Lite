@@ -1,6 +1,7 @@
 """Configuration via pydantic-settings."""
 
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings
 
 
@@ -10,9 +11,11 @@ class Settings(BaseSettings):
     secret_key: str = "change-me"
     debug: bool = False
 
-    # Database
-    database_url: str = "postgresql+asyncpg://mal:mal_password@localhost:5432/mal_db"
-    database_url_sync: str = "postgresql://mal:mal_password@localhost:5432/mal_db"
+    # Database — supports both PostgreSQL and SQLite
+    # SQLite:  sqlite+aiosqlite:///./mal.db
+    # PG:     postgresql+asyncpg://user:pass@host:5432/db
+    database_url: str = "sqlite+aiosqlite:///./mal.db"
+    database_url_sync: str = "sqlite:///./mal.db"
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"
@@ -42,6 +45,13 @@ class Settings(BaseSettings):
     admin_email: str = "admin@example.com"
     admin_password: str = "changeme123"
     jwt_expire_minutes: int = 1440
+
+    # Tracking
+    base_url: str = "http://localhost:8000"
+
+    @property
+    def is_sqlite(self) -> bool:
+        return "sqlite" in self.database_url
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

@@ -1,7 +1,6 @@
-"""Webhook tracking — open pixel + click redirect."""
+"""Webhook tracking — open pixel + click redirect + unsubscribe."""
 
 import logging
-from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from fastapi.responses import RedirectResponse
@@ -9,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models import Campaign, EmailEvent
+from app.models import Campaign, Contact, EmailEvent
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/track", tags=["tracking"])
@@ -25,12 +24,11 @@ TRACKING_PIXEL = (
 
 @router.get("/open/{campaign_id}/{contact_id}")
 async def track_open(
-    campaign_id: UUID,
-    contact_id: UUID,
+    campaign_id: str,
+    contact_id: str,
     db: AsyncSession = Depends(get_db),
 ):
     """Record an email open event and return a tracking pixel."""
-    # Check if already tracked to avoid duplicates
     existing = await db.execute(
         select(EmailEvent).where(
             EmailEvent.campaign_id == campaign_id,
@@ -44,7 +42,6 @@ async def track_open(
             contact_id=contact_id,
             event_type="opened",
         ))
-        # Increment campaign counter
         result = await db.execute(select(Campaign).where(Campaign.id == campaign_id))
         campaign = result.scalar_one_or_none()
         if campaign:
@@ -57,8 +54,8 @@ async def track_open(
 
 @router.get("/click/{campaign_id}/{contact_id}")
 async def track_click(
-    campaign_id: UUID,
-    contact_id: UUID,
+    campaign_id: str,
+    contact_id: str,
     url: str = Query(..., description="Destination URL"),
     db: AsyncSession = Depends(get_db),
 ):
@@ -66,14 +63,12 @@ async def track_click(
     if not url.startswith(("http://", "https://")):
         raise HTTPException(400, "Invalid redirect URL")
 
-    # Record click event
     db.add(EmailEvent(
         campaign_id=campaign_id,
         contact_id=contact_id,
         event_type="clicked",
-        metadata_={"url": url},
+        metadata_='{"url": "' + url + '"}',
     ))
-    # Increment campaign counter
     result = await db.execute(select(Campaign).where(Campaign.id == campaign_id))
     campaign = result.scalar_one_or_none()
     if campaign:
@@ -86,26 +81,21 @@ async def track_click(
 
 @router.get("/unsubscribe/{campaign_id}/{contact_id}")
 async def track_unsubscribe(
-    campaign_id: UUID,
-    contact_id: UUID,
+    campaign_id: str,
+    contact_id: str,
     db: AsyncSession = Depends(get_db),
 ):
     """Unsubscribe a contact and record the event."""
-    from app.models import Contact
-
-    # Update contact subscription
     result = await db.execute(select(Contact).where(Contact.id == contact_id))
     contact = result.scalar_one_or_none()
     if contact:
         contact.subscribed = False
 
-    # Record event
     db.add(EmailEvent(
         campaign_id=campaign_id,
         contact_id=contact_id,
         event_type="unsubscribed",
     ))
-    # Increment campaign counter
     result = await db.execute(select(Campaign).where(Campaign.id == campaign_id))
     campaign = result.scalar_one_or_none()
     if campaign:

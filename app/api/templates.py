@@ -1,57 +1,21 @@
-"""Email template model + Jinja2 rendering service."""
+"""Email template CRUD + Jinja2 rendering."""
 
-from uuid import UUID
+import json
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from jinja2 import BaseLoader, Environment, TemplateSyntaxError
-from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models import EmailTemplate
+from app.schemas import RenderRequest, RenderResponse, TemplateCreate, TemplateOut, TemplateUpdate
 
 router = APIRouter(prefix="/templates", tags=["templates"])
 
 _jinja_env = Environment(loader=BaseLoader(), autoescape=True)
 
 
-# ── Schemas ──────────────────────────────────────────────
-class TemplateCreate(BaseModel):
-    name: str
-    subject: str
-    html_body: str
-    text_body: str = ""
-    variables: list[str] = Field(default_factory=list)
-    category: str = "general"
-
-
-class TemplateUpdate(BaseModel):
-    name: str | None = None
-    subject: str | None = None
-    html_body: str | None = None
-    text_body: str | None = None
-    variables: list[str] | None = None
-    category: str | None = None
-
-
-class TemplateOut(TemplateCreate):
-    id: UUID
-
-    model_config = {"from_attributes": True}
-
-
-class RenderRequest(BaseModel):
-    variables: dict = Field(default_factory=dict)
-
-
-class RenderResponse(BaseModel):
-    subject: str
-    html_body: str
-    text_body: str
-
-
-# ── Helpers ──────────────────────────────────────────────
 def render_template_string(template_str: str, variables: dict) -> str:
     """Render a Jinja2 template string with given variables."""
     try:
@@ -61,7 +25,6 @@ def render_template_string(template_str: str, variables: dict) -> str:
         raise ValueError(f"Template syntax error: {e}") from e
 
 
-# ── CRUD ─────────────────────────────────────────────────
 @router.get("/", response_model=list[TemplateOut])
 async def list_templates(
     skip: int = Query(0, ge=0),
@@ -74,42 +37,53 @@ async def list_templates(
         stmt = stmt.where(EmailTemplate.category == category)
     stmt = stmt.order_by(EmailTemplate.name).offset(skip).limit(limit)
     result = await db.execute(stmt)
-    return result.scalars().all()
+    templates = result.scalars().all()
+    return [TemplateOut.from_model(t) for t in templates]
 
 
 @router.post("/", response_model=TemplateOut, status_code=201)
 async def create_template(data: TemplateCreate, db: AsyncSession = Depends(get_db)):
-    tpl = EmailTemplate(**data.model_dump())
+    tpl = EmailTemplate(
+        name=data.name,
+        subject=data.subject,
+        html_body=data.html_body,
+        text_body=data.text_body,
+        variables=json.dumps(data.variables),
+        category=data.category,
+    )
     db.add(tpl)
     await db.commit()
     await db.refresh(tpl)
-    return tpl
+    return TemplateOut.from_model(tpl)
 
 
 @router.get("/{template_id}", response_model=TemplateOut)
-async def get_template(template_id: UUID, db: AsyncSession = Depends(get_db)):
+async def get_template(template_id: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(EmailTemplate).where(EmailTemplate.id == template_id))
     tpl = result.scalar_one_or_none()
     if not tpl:
         raise HTTPException(404, "Template not found")
-    return tpl
+    return TemplateOut.from_model(tpl)
 
 
 @router.patch("/{template_id}", response_model=TemplateOut)
-async def update_template(template_id: UUID, data: TemplateUpdate, db: AsyncSession = Depends(get_db)):
+async def update_template(template_id: str, data: TemplateUpdate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(EmailTemplate).where(EmailTemplate.id == template_id))
     tpl = result.scalar_one_or_none()
     if not tpl:
         raise HTTPException(404, "Template not found")
     for key, val in data.model_dump(exclude_unset=True).items():
-        setattr(tpl, key, val)
+        if key == "variables" and val is not None:
+            setattr(tpl, key, json.dumps(val))
+        else:
+            setattr(tpl, key, val)
     await db.commit()
     await db.refresh(tpl)
-    return tpl
+    return TemplateOut.from_model(tpl)
 
 
 @router.delete("/{template_id}", status_code=204)
-async def delete_template(template_id: UUID, db: AsyncSession = Depends(get_db)):
+async def delete_template(template_id: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(EmailTemplate).where(EmailTemplate.id == template_id))
     tpl = result.scalar_one_or_none()
     if not tpl:
@@ -120,7 +94,7 @@ async def delete_template(template_id: UUID, db: AsyncSession = Depends(get_db))
 
 @router.post("/{template_id}/render", response_model=RenderResponse)
 async def render_template(
-    template_id: UUID,
+    template_id: str,
     body: RenderRequest,
     db: AsyncSession = Depends(get_db),
 ):
