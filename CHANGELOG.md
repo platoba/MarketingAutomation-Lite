@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.1.0] - 2026-03-02
+
+### Added
+- **SMS Marketing Module** — Multi-provider SMS campaign management
+  - SMS campaign creation, scheduling, and sending
+  - Twilio and Aliyun SMS provider support
+  - Delivery tracking and error logging
+  - Segment-based targeting
+  - SMS analytics and delivery reports
+  - 6 new REST API endpoints for SMS operations
+  - Database migrations for `sms_campaigns` and `sms_logs` tables
+
+### Technical
+- New models: `SMSCampaign`, `SMSLog`, `SMSStatus` enum
+- New service: `SMSService` with provider abstraction
+- New API router: `/sms/*` endpoints
+- Test coverage for SMS service and providers
+
+# Changelog
+
 All notable changes to this project will be documented in this file.
 
 ## [4.0.0] - 2026-02-28

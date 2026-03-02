@@ -190,3 +190,59 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR
 ## License
 
 MIT
+
+## v1.1.0 - SMS Marketing Module 📱
+
+New feature: Multi-provider SMS campaign management
+
+### Features
+- **SMS Campaigns** — Create, schedule, and send SMS campaigns to contact segments
+- **Multi-Provider Support** — Twilio, Aliyun (阿里云短信), extensible provider interface
+- **Delivery Tracking** — Real-time SMS delivery status, error logging, retry logic
+- **Segment Targeting** — Send to specific contact segments or all contacts with phone numbers
+- **SMS Analytics** — Delivery rates, failed messages, provider-specific metrics
+
+### API Endpoints
+```
+POST   /sms/campaigns          # Create SMS campaign
+GET    /sms/campaigns          # List all campaigns
+GET    /sms/campaigns/{id}     # Get campaign details
+POST   /sms/campaigns/{id}/send # Send campaign immediately
+GET    /sms/campaigns/{id}/logs # Get delivery logs
+DELETE /sms/campaigns/{id}     # Delete campaign
+```
+
+### Configuration
+Add to `.env`:
+```bash
+# Twilio
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_FROM_NUMBER=+1234567890
+
+# Aliyun SMS
+ALIYUN_ACCESS_KEY_ID=your_key_id
+ALIYUN_ACCESS_KEY_SECRET=your_secret
+ALIYUN_SMS_SIGN_NAME=your_sign_name
+```
+
+### Usage Example
+```python
+# Create SMS campaign
+POST /sms/campaigns
+{
+  "name": "Flash Sale Alert",
+  "message": "🔥 50% OFF! Use code FLASH50. Valid 24h only.",
+  "segment_id": 5,
+  "provider": "twilio",
+  "sender_id": "+1234567890"
+}
+
+# Send immediately
+POST /sms/campaigns/1/send
+```
+
+### Database Migration
+```bash
+alembic upgrade head
+```

@@ -9,7 +9,7 @@ from app.config import get_settings
 from app.api import (
     auth, contacts, campaigns, templates, tracking, workflows, dashboard,
     ab_testing, analytics, import_export, webhooks, scoring, lifecycle,
-    tags, segments, automation_rules,
+    tags, segments, automation_rules, sms,
 )
 
 settings = get_settings()
