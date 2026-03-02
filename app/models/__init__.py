@@ -86,6 +86,8 @@ class Segment(Base):
     created_at = Column(DateTime, default=utcnow)
 
     contacts = relationship("Contact", secondary=contact_segments, back_populates="segments", lazy="selectin")
+    sms_campaigns = relationship("SMSCampaign", back_populates="segment")
+    whatsapp_campaigns = relationship("WhatsAppCampaign", back_populates="segment")
 
 
 # ── Campaign ────────────────────────────────────────────
@@ -192,3 +194,4 @@ class User(Base):
 from app.models.ab_test import ABTest, ABTestVariant  # noqa: E402, F401
 from app.models.webhook import WebhookEndpoint, WebhookDelivery  # noqa: E402, F401
 from app.models.lead_score import ScoringRule, ContactScore, ScoreEvent, SuppressionList  # noqa: E402, F401
+from app.models.whatsapp_campaign import WhatsAppCampaign, WhatsAppLog  # noqa: E402, F401

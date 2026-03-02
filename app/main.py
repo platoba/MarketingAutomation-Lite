@@ -9,7 +9,7 @@ from app.config import get_settings
 from app.api import (
     auth, contacts, campaigns, templates, tracking, workflows, dashboard,
     ab_testing, analytics, import_export, webhooks, scoring, lifecycle,
-    tags, segments, automation_rules, sms,
+    tags, segments, automation_rules, sms, whatsapp,
 )
 
 settings = get_settings()
@@ -69,6 +69,7 @@ app.include_router(lifecycle.router, prefix="/api/v1")
 app.include_router(tags.router, prefix="/api/v1")
 app.include_router(segments.router, prefix="/api/v1")
 app.include_router(automation_rules.router, prefix="/api/v1")
+app.include_router(whatsapp.router, prefix="/api/v1")
 
 
 @app.get("/health")

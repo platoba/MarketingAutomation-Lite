@@ -1,3 +1,23 @@
+## [1.2.0] - 2026-03-03
+
+### Added
+- **WhatsApp Marketing Module** — Multi-provider WhatsApp campaign management
+  - WhatsApp campaign creation, scheduling, and sending
+  - Twilio, MessageBird, and Vonage provider support
+  - Media attachment support (images, videos, documents)
+  - Delivery tracking with read receipts and reply tracking
+  - Segment-based targeting
+  - WhatsApp analytics (delivery rate, read rate, reply rate)
+  - 8 new REST API endpoints for WhatsApp operations
+  - Database migrations for `whatsapp_campaigns` and `whatsapp_logs` tables
+
+### Technical
+- New models: `WhatsAppCampaign`, `WhatsAppLog`, `WhatsAppStatus`, `WhatsAppProvider` enums
+- New service: `WhatsAppService` with multi-provider abstraction
+- New API router: `/api/v1/whatsapp/*` endpoints
+- Test coverage for WhatsApp service and campaigns (15+ tests)
+- Complete multi-channel marketing stack: Email + SMS + WhatsApp
+
 # Changelog
 
 ## [1.1.0] - 2026-03-02

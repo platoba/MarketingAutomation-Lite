@@ -13,6 +13,7 @@ Lightweight, self-hosted marketing automation platform for cross-border e-commer
 - **Lifecycle Management** — Automatic lifecycle stages: subscriber → lead → MQL → SQL → customer → evangelist
 - **Suppression Lists** — Global email suppression (bounce/complaint/unsubscribe/manual/compliance)
 - **Email Campaigns** — Create, schedule, send HTML email campaigns via SMTP/SES
+- **WhatsApp Campaigns** — Send WhatsApp messages with media attachments via Twilio/MessageBird/Vonage
 - **Email Templates** — Jinja2-powered reusable templates with variable substitution and preview
 - **A/B Testing** — Test subject lines, content, send times with statistical significance
 - **Automation Workflows** — Trigger-based email sequences (welcome, abandoned cart, re-engagement)
