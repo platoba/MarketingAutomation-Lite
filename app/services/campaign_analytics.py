@@ -1,14 +1,12 @@
 """Campaign analytics service — funnel analysis, cohort tracking, and time-series metrics."""
 
-import json
-import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import and_, case, cast, func, select, String
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Campaign, Contact, EmailEvent

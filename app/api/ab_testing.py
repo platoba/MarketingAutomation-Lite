@@ -1,7 +1,5 @@
 """A/B Testing API — create, manage, and evaluate split tests for campaigns."""
 
-import json
-import random
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query

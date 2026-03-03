@@ -1,8 +1,6 @@
 """Tests for suppression list management."""
 
-import json
 from datetime import datetime, timezone
-from unittest.mock import MagicMock
 
 import pytest
 

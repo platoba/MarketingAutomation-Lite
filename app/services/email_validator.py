@@ -4,7 +4,6 @@ import re
 import socket
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 # ── Disposable email domains (top 200+) ─────────────────
 DISPOSABLE_DOMAINS: set[str] = {

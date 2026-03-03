@@ -1,7 +1,6 @@
 """Tests for A/B testing module."""
 
 import pytest
-from datetime import datetime, timezone
 
 
 # ── Model tests ──────────────────────────────────────────

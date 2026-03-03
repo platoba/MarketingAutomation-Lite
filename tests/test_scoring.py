@@ -3,9 +3,8 @@
 import json
 import math
 from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 
 # ── Scoring engine unit tests ─────────────────────────────
 

@@ -1,6 +1,5 @@
 """Tests for webhook module."""
 
-import json
 import pytest
 
 

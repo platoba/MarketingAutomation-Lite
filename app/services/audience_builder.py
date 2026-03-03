@@ -1,13 +1,12 @@
 """Audience builder — rule-based dynamic segmentation with exclusions."""
 
 import json
-from datetime import datetime, timedelta, timezone
-from enum import Enum
+from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import Column, DateTime, Integer, String, Text, Boolean, Float
+from sqlalchemy import Column, DateTime, Integer, String, Text, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_, or_, not_
+from sqlalchemy import select, func, and_, or_
 
 from app.database import Base
 from app.models import new_uuid, utcnow, Contact, SuppressionList

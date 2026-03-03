@@ -1,12 +1,11 @@
 """Campaign scheduler — timezone-aware send scheduling with throttling and AB auto-winner."""
 
 import json
-import math
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import Column, DateTime, Float, Integer, String, Text, Boolean
+from sqlalchemy import Column, DateTime, Integer, String, Text, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 

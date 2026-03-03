@@ -1,13 +1,12 @@
 """Contact lifecycle management — automated stage transitions, engagement tracking, and dormancy detection."""
 
-import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import and_, case, func, select, update
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Contact, EmailEvent

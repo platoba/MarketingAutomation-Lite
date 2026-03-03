@@ -11,7 +11,6 @@ from app.api.automation_rules import (
     AutomationRule,
     RuleCreate,
     RuleEngine,
-    RuleOut,
     RuleUpdate,
 )
 

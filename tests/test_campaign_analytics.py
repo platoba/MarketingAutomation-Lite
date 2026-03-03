@@ -1,8 +1,5 @@
 """Tests for campaign analytics service."""
 
-import pytest
-from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from app.services.campaign_analytics import (
     CampaignMetrics,
@@ -10,12 +7,6 @@ from app.services.campaign_analytics import (
     FunnelStep,
     FunnelStage,
     TimeSeriesPoint,
-    get_campaign_funnel,
-    compare_campaigns,
-    get_engagement_timeseries,
-    get_cohort_retention,
-    get_top_campaigns,
-    get_dashboard_stats,
 )
 
 

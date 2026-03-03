@@ -2,13 +2,13 @@
 
 import json
 import math
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Optional
 
-from sqlalchemy import and_, delete, func, select, update
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Contact, EmailEvent
+from app.models import Contact
 from app.models.lead_score import ContactScore, ScoreEvent, ScoringRule, SuppressionList
 
 

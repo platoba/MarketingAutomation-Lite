@@ -1,7 +1,5 @@
 """Tests for contact lifecycle management service."""
 
-import pytest
-from datetime import datetime, timedelta, timezone
 
 from app.services.contact_lifecycle import (
     DEFAULT_RULES,

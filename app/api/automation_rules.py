@@ -2,7 +2,6 @@
 
 import json
 from datetime import datetime, timezone
-from enum import Enum
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query

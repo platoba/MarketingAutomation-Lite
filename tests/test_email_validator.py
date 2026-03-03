@@ -1,6 +1,5 @@
 """Tests for email validation service."""
 
-import pytest
 
 from app.services.email_validator import (
     DISPOSABLE_DOMAINS,
@@ -8,7 +7,6 @@ from app.services.email_validator import (
     ROLE_BASED_PREFIXES,
     RiskLevel,
     ValidationLevel,
-    ValidationResult,
     check_disposable,
     check_free_provider,
     check_role_based,

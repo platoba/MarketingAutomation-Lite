@@ -2,12 +2,11 @@
 
 import json
 import logging
-from datetime import datetime, timezone
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Contact, Tag, Workflow, WorkflowLog, contact_tags
+from app.models import Contact, Tag, Workflow, WorkflowLog
 
 logger = logging.getLogger(__name__)
 

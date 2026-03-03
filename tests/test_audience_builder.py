@@ -1,7 +1,6 @@
 """Tests for audience builder service."""
 
 import json
-from datetime import datetime, timezone
 
 import pytest
 import pytest_asyncio

@@ -1,11 +1,10 @@
 """Analytics service — advanced campaign metrics, cohort analysis, and performance reports."""
 
-import json
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy import func, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -1,7 +1,6 @@
 """Tests for analytics service."""
 
 import pytest
-from datetime import datetime, timezone
 
 
 # ── Schema tests ─────────────────────────────────────────
